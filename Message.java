@@ -1,13 +1,13 @@
 import java.util.Scanner;
 
-public class Parser {
+public class Message {
     private int controlType;
     private int payloadQuant;
     private int[] userID;
     private int[] payloadLength;
     private String[] payloadMessage;
 
-    public Parser(String message) {
+    public Message(String message) {
         Scanner scan = new Scanner(message).useDelimiter("%@&");
 
         this.controlType = scan.nextInt();
