@@ -12,8 +12,7 @@ public class Connection implements Runnable
 {
 	private Socket	client;
 	private static Handler handler = new Handler();
-
-	private int available_id = 2;
+	private static int available_id = 2;
 
 	
 	public Connection(Socket client) {

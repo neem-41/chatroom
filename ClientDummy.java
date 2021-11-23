@@ -13,40 +13,22 @@ import java.util.HashMap;
 
 import javax.lang.model.util.Elements.Origin;
 
-public class client
+public class ClientDummy
 {
 	// Port set to 4200
 	public static final int DEFAULT_PORT = 4200;
 	
 	public static void main(String[] args) throws IOException {	
-		InputStream fromServer = null;
-		OutputStream toServer = null;		// the writer to the network
+		BufferedReader fromServer = null;
+		DataOutputStream toServer = null;		// the writer to the network
 		Socket server = null;			// the socket
 		
 		try {
-			server = new Socket(args[0], DEFAULT_PORT);	
-			Message m = new Message(Message.MessageType.JOIN, 1);
-			m.addPayload(new Message.Payload(0, "Neem"), 0);
-
-			ByteBuffer send = (new MessageHandler(m)).getBuffer();
-			byte[] bsend = new byte[send.capacity()];
-
-			for(int i =0; i < bsend.length; i++) {
-				bsend[i] = send.get(i);
-				System.out.print(bsend[i]);
-			}
-
-			System.out.println();
-
-			// to the server
-			toServer = server.getOutputStream();
-			toServer.write(bsend);
-			toServer.flush();
-
-			// from the server
-			fromServer = server.getInputStream();
-			System.out.println("From server: "+ fromServer.readAllBytes());
-
+			server = new Socket(args[0], DEFAULT_PORT);
+			
+			toServer = new DataOutputStream(server.getOutputStream());
+			toServer.writeBytes("1%@&1%@&0%@&4%@&Neem");
+			
 		}
 		catch (IOException ioe) {
 			System.err.println("There was an unexpected intteruption!");
