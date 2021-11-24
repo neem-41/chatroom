@@ -26,12 +26,16 @@ public class  Server
     // construct a thread pool for concurrency	
 	private static final Executor exec = Executors.newCachedThreadPool();
 
-	private static HashMap<Integer, Socket> map = new HashMap<>();
+	private static HashMap<Socket, Integer> map = new HashMap<>();
 	private static int userID_avail = 2;
 
 
 	public static void addClient(Socket client) {
-		map.put(userID_avail++, client);
+		map.put(client, userID_avail++);
+	}
+
+	public static Integer getClient(Socket client) {
+		return map.get(client);
 	}
 	
 	public static void main(String[] args) throws IOException {

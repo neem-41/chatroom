@@ -37,10 +37,16 @@ public class Handler
 			String messageFromClient = fromClient.readLine();
 			Message mFromClient = new Message(messageFromClient);
 
+			System.out.println(mFromClient.getPayloadQuantity());
 			if (mFromClient.getControlType() == 1) {
-				Server.addClient(client);
-
-				System.out.println(mFromClient.getPayload()[0] + " has joined the chatroom");
+				if (mFromClient.getPayloadQuantity() != 1) {
+					System.out.println("Protocal voilated, a user cannot join as multiple person.");
+				}
+				else{ 
+					//TODO: Return a broadcast to all the clients with teh appropriate format.
+					Server.addClient(client);
+					System.out.println(mFromClient.getPayload()[0] + " has joined the chatroom and got the userID: " + Server.getClient(client));
+				}
 			}
 			
    		}

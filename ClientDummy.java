@@ -26,8 +26,17 @@ public class ClientDummy
 		try {
 			server = new Socket(args[0], DEFAULT_PORT);
 			
+			// joining the server
 			toServer = new DataOutputStream(server.getOutputStream());
-			toServer.writeBytes("1%@&1%@&0%@&4%@&Neem");
+			Message messageToserver = new Message(1);
+			messageToserver.addPayload(0, "Neem");
+			String toSend = messageToserver.createMessageString();
+			toServer.writeBytes(toSend);
+
+			messageToserver.addPayload(0, "Alex");
+			toSend = messageToserver.createMessageString();
+			System.out.println(toSend);
+			toServer.writeBytes(toSend);
 			
 		}
 		catch (IOException ioe) {
