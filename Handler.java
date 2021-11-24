@@ -35,12 +35,12 @@ public class Handler
 			 * get the input and output streams associated with the client.
 			 */
 			String messageFromClient = fromClient.readLine();
-			Parser message = new Parser(messageFromClient);
+			Message mFromClient = new Message(messageFromClient);
 
-			if (message.getControlType() == 1) {
+			if (mFromClient.getControlType() == 1) {
 				Server.addClient(client);
 
-				System.out.println(message.getPayload()[0] + " has joined the chatroom");
+				System.out.println(mFromClient.getPayload()[0] + " has joined the chatroom");
 			}
 			
    		}

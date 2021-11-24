@@ -7,6 +7,7 @@ public class Message {
     private int[] payloadLength;
     private String[] payloadMessage;
 
+    // This is called by the server to parse the Message.
     public Message(String message) {
         Scanner scan = new Scanner(message).useDelimiter("%@&");
 
@@ -23,6 +24,19 @@ public class Message {
             this.payloadMessage[i] = scan.next();
         }
         scan.close();
+    }
+
+    // Used by client or server to create a new message.
+    public Message(int cType) {
+        this.controlType = cType;
+        this.payloadQuant = 0; 
+    }
+
+    public void addPayload(int uid, String payload) {
+        this.userID[this.payloadQuant] = uid;
+        this.payloadMessage[this.payloadQuant] = payload;
+        this.payloadLength[this.payloadQuant] = this.payloadMessage[this.payloadQuant].length();
+        this.payloadQuant += 1;
     }
 
     public void printMessage() {
