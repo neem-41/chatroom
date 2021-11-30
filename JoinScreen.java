@@ -23,7 +23,9 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 {
 	private JButton exitButton;
 	private JButton joinButton;
+	private JTextField sendText;
 	private JTextArea displayArea;
+	
     
         
 	public JoinScreen() {
@@ -39,6 +41,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		/**
 		 * set up all the components
 		 */
+		sendText = new JTextField(30);
 		joinButton = new JButton("Join");
         exitButton = new JButton("Exit");
 		
@@ -46,6 +49,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		/**
 		 * register the listeners for the different button clicks
 		 */
+		sendText.addKeyListener(this);
 		joinButton.addActionListener(this);
         exitButton.addActionListener(this);
         
@@ -53,6 +57,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		/**
 		 * add the components to the panel
 		 */
+		p.add(sendText);
 		p.add(joinButton);
         p.add(exitButton);
 		
@@ -81,6 +86,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		pack();
  
 		setVisible(true);
+		sendText.requestFocus();
 
 		/** anonymous inner class to handle window closing events */
 		addWindowListener(new WindowAdapter() {
@@ -94,6 +100,34 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 
 	}
 
+	String message = "";
+
+	/**
+	 * This gets the text the user entered and outputs it
+	 * in the display area.
+	 */
+	public void displayText() {
+		String username = "Username: ";
+		String message = sendText.getText().trim();
+		username += message;
+		StringBuffer buffer = new StringBuffer(username.length());
+		// // now reverse it
+		// for (int i = message.length()-1; i >= 0; i--)
+		//     buffer.append(message.charAt(i));
+		
+		for (int i = 0; i <= username.length()-1; i++)
+			buffer.append(username.charAt(i));
+
+		displayArea.append(buffer.toString() + "\n");
+
+		sendText.setText("");
+		sendText.requestFocus();
+	
+	}
+
+	public String getMessage() {
+		return message;
+	}
 
 	/**
 	 * This method responds to action events .... i.e. button clicks
@@ -118,8 +152,10 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
         //  * This is invoked when the user presses
         //  * a key.
         //  */
-        /** Not Implemented */
-        public void keyPressed(KeyEvent e) { }
+        public void keyPressed(KeyEvent e) { 
+			if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                displayText();
+		}
         
         /** Not implemented */
         public void keyReleased(KeyEvent e) { }
@@ -128,7 +164,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
         public void keyTyped(KeyEvent e) {  }
         
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		JFrame joinChatRoom = new JoinScreen();
 	}
 }
