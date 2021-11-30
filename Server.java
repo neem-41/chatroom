@@ -34,8 +34,15 @@ public class  Server
 		map.put(client, userID_avail++);
 	}
 
+	public static void removeClient(Socket client) {
+		map.remove(client);
+	}
 	public static Integer getClient(Socket client) {
 		return map.get(client);
+	}
+
+	public static Integer[] getAllUsers() {
+		return (Integer[])map.values().toArray();
 	}
 	
 	public static void main(String[] args) throws IOException {

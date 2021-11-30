@@ -57,7 +57,7 @@ public class Message {
         for (int i=0; i < this.payloadQuant; i++) {
             toreturn = toreturn + this.userID[i] + del + this.payloadLength[i] + del + this.payloadMessage[i] + del;
         }
-        toreturn = toreturn.substring(0, toreturn.lastIndexOf(del));
+        toreturn = toreturn.substring(0, toreturn.lastIndexOf(del)) + "\n";
 
         return toreturn;
     }
@@ -91,6 +91,10 @@ public class Message {
 
     public String[] getPayload() {
         return this.payloadMessage;
+    }
+    
+    public void setControlType(int control) {
+        this.controlType = control;
     }
 
     private int[] increase(int[] arr) {

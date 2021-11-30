@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Scanner;
 import java.util.HashMap;
 
 import javax.lang.model.util.Elements.Origin;
@@ -32,11 +33,23 @@ public class ClientDummy
 			messageToserver.addPayload(0, "Neem");
 			String toSend = messageToserver.createMessageString();
 			toServer.writeBytes(toSend);
+			toServer.flush();
 
-			messageToserver.addPayload(0, "Alex");
+			//Alex joins the server
+			Message alexadd = new Message(1);
+			alexadd.addPayload(0, "Alex");
+			String tosend = alexadd.createMessageString();
+			toServer.writeBytes(tosend);
+			System.out.println(tosend);
+			toServer.flush();
+
+
+			// leaving the server
+			messageToserver.setControlType(2);
 			toSend = messageToserver.createMessageString();
 			System.out.println(toSend);
 			toServer.writeBytes(toSend);
+			toServer.flush();
 			
 		}
 		catch (IOException ioe) {
