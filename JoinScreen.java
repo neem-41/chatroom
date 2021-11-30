@@ -12,9 +12,14 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 //import java.io.File;
 import java.io.IOException;
+import java.net.Socket;
+import java.nio.ByteBuffer;
 
+import javax.print.DocFlavor.INPUT_STREAM;
 //import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -100,7 +105,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 
 	}
 
-	String message = "";
+	private String message = "";
 
 	/**
 	 * This gets the text the user entered and outputs it
@@ -109,6 +114,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 	public void displayText() {
 		String username = "Username: ";
 		String message = sendText.getText().trim();
+		this.message = message;
 		username += message;
 		StringBuffer buffer = new StringBuffer(username.length());
 		// // now reverse it
@@ -126,7 +132,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 	}
 
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 
 	/**
@@ -136,9 +142,17 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 	public void actionPerformed(ActionEvent evt) {
 		Object source = evt.getSource();
 
-		if (source == joinButton) 
-            // Enter the join message command
-            System.exit(0);
+		if (source == joinButton) {
+			try {
+				join("146.86.115.249");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			finally {
+            	System.exit(0);
+			}
+		}
 		else if (source == exitButton)
 			System.exit(0);
 	}
@@ -163,6 +177,41 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
         /** Not implemented */
         public void keyTyped(KeyEvent e) {  }
         
+
+	public void join(String ip) throws IOException {
+		int DEFAULT_PORT = 4200;
+		
+		BufferedReader fromServer = null;
+		DataOutputStream toServer = null;		// the writer to the network
+		Socket server = null;			// the socket
+		
+		try {
+			server = new Socket(ip, DEFAULT_PORT);
+			
+			
+
+			// joining the server
+			toServer = new DataOutputStream(server.getOutputStream());
+			Message messageToserver = new Message(1);
+			messageToserver.addPayload(0, getMessage());
+			String toSend = messageToserver.createMessageString();
+			System.out.println(toSend);
+			toServer.writeBytes(toSend);
+			toServer.flush();
+			
+		}
+		catch (IOException ioe) {
+			System.err.println("There was an unexpected intteruption!");
+		}
+		finally {
+			if (fromServer != null)
+				fromServer.close();
+			if (toServer != null)
+				toServer.close();
+			if (server != null)
+				server.close();
+		}
+	}
 
 	public static void main(String[] args) throws IOException {
 		JFrame joinChatRoom = new JoinScreen();
