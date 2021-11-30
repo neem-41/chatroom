@@ -150,8 +150,12 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
          
         /** Not implemented */
         public void keyTyped(KeyEvent e) {  }
-        
+     
+	// not yet implemented 
+	public void Leave() {
 
+	}
+	
 	public static void main(String[] args) {
 		JFrame chatroom = new ChatScreen();
 
