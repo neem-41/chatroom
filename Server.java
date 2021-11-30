@@ -15,6 +15,7 @@
 import java.net.*;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.io.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.*;
 
@@ -41,8 +42,8 @@ public class  Server
 		return map.get(client);
 	}
 
-	public static Integer[] getAllUsers() {
-		return (Integer[])map.values().toArray();
+	public static Collection<Integer> getAllUsers() {
+		return map.values();
 	}
 	
 	public static void main(String[] args) throws IOException {

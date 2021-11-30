@@ -35,36 +35,39 @@ public class Handler
 			/**
 			 * get the input and output streams associated with the client.
 			 */
-			String messageFromClient = fromClient.readLine();
-			System.out.println(messageFromClient);
-			Message mFromClient = new Message(messageFromClient);
+			String messageFromClient;
+			
+			while( (messageFromClient = fromClient.readLine()) != null) {
+				System.out.println(messageFromClient);
+				Message mFromClient = new Message(messageFromClient);
 
-			System.out.println(mFromClient.getPayloadQuantity());
-			if (mFromClient.getControlType() == 1) {
-				if (mFromClient.getPayloadQuantity() != 1) {
-					toClient.writeBytes("ERROR");
-				}
-				else{ 
-					//TODO: Return a broadcast to all the clients with teh appropriate format.
-					Server.addClient(client);
-					System.out.println(mFromClient.getPayload()[0] + " has joined the chatroom and got the userID: " + Server.getClient(client));
-					System.out.println(mFromClient.getPayload()[0]);
-				}
-			}
-
-			if (mFromClient.getControlType() == 2) {
-				if (mFromClient.getPayloadQuantity() != 1) {
-					toClient.writeBytes("ERROR");
-				}
-				else {
-					Server.removeClient(client);
-					for (int f : Server.getAllUsers()) {
-						System.out.println(f + " is still on server.");
-						client.close();
+				System.out.println(mFromClient.getPayloadQuantity());
+				if (mFromClient.getControlType() == 1) {
+					if (mFromClient.getPayloadQuantity() != 1) {
+						toClient.writeBytes("ERROR");
+					}
+					else{ 
+						//TODO: Return a broadcast to all the clients with teh appropriate format.
+						Server.addClient(client);
+						System.out.println(mFromClient.getPayload()[0] + " has joined the chatroom and got the userID: " + Server.getClient(client));
 					}
 				}
+
+				if (mFromClient.getControlType() == 2) {
+					if (mFromClient.getPayloadQuantity() != 1) {
+						toClient.writeBytes("ERROR");
+					}
+					else {
+						Server.removeClient(client);
+						System.out.println("here.");
+						for (int f : Server.getAllUsers()) {
+							System.out.println(f + " is still on server.");
+							client.close();
+						}
+					}
+				}
+				toClient.flush();
 			}
-			toClient.flush();
 
 			
    		}

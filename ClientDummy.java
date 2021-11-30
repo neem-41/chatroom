@@ -32,17 +32,9 @@ public class ClientDummy
 			Message messageToserver = new Message(1);
 			messageToserver.addPayload(0, "Neem");
 			String toSend = messageToserver.createMessageString();
+			System.out.println(toSend);
 			toServer.writeBytes(toSend);
 			toServer.flush();
-
-			//Alex joins the server
-			Message alexadd = new Message(1);
-			alexadd.addPayload(0, "Alex");
-			String tosend = alexadd.createMessageString();
-			toServer.writeBytes(tosend);
-			System.out.println(tosend);
-			toServer.flush();
-
 
 			// leaving the server
 			messageToserver.setControlType(2);
