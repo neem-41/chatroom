@@ -97,10 +97,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	public void displayText() {
 		String message = sendText.getText().trim();
 		StringBuffer buffer = new StringBuffer(message.length());
-
-		// // now reverse it
-		// for (int i = message.length()-1; i >= 0; i--)
-		//     buffer.append(message.charAt(i));
 		
 		for (int i = 0; i <= message.length()-1; i++)
 			buffer.append(message.charAt(i));
@@ -128,6 +124,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		if (source == sendButton) 
 			displayText();
 		else if (source == exitButton)
+			//Leave();
 			System.exit(0);
 	}
         
