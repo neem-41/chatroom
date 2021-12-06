@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import javax.lang.model.util.Elements.Origin;
 
+
 public class ClientDummy
 {
 	// Port set to 4200
@@ -36,7 +37,11 @@ public class ClientDummy
 			toServer.writeBytes(toSend);
 			toServer.flush();
 
-			
+			messageToserver = new Message(255);
+			messageToserver.addPayload(3, "Hi this is Neem joining in second.");
+			toServer.writeBytes(messageToserver.createMessageString());
+			toServer.flush();
+
 			while ( (fromServer = new BufferedReader(new InputStreamReader(server.getInputStream())))  != null) {
 				System.out.println(fromServer.readLine());
 			}
