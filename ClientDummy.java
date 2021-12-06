@@ -35,10 +35,11 @@ public class ClientDummy
 			System.out.println(toSend);
 			toServer.writeBytes(toSend);
 			toServer.flush();
-			
 
-			fromServer = new BufferedReader(new InputStreamReader(server.getInputStream()));
-			System.out.println(fromServer.readLine());
+			
+			while ( (fromServer = new BufferedReader(new InputStreamReader(server.getInputStream())))  != null) {
+				System.out.println(fromServer.readLine());
+			}
 			// leaving the server
 			// messageToserver.setControlType(2);
 			// toSend = messageToserver.createMessageString();

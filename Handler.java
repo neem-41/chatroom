@@ -43,20 +43,21 @@ public class Handler
 				Message mFromClient = new Message(messageFromClient);
 
 				// this is for joining.
-				System.out.println(mFromClient.getPayloadQuantity());
 				if (mFromClient.getControlType() == 1) {
 					if (mFromClient.getPayloadQuantity() != 1) {
 						toClient.writeBytes("ERROR");
 					}
 					else{ 
 						Server.addClient(client);
-						System.out.println(mFromClient.getPayload()[0] + " has joined the chatroom and got the userID: " + Server.getClient(client));
+						Server.addName(Server.getAvailId()-1, mFromClient.getPayload()[0]);
 						
 						Message newtoclient = new Message(0);
-						newtoclient.addPayload(Server.getAvailId()-1, mFromClient.getPayload()[0]);
-						
+						for (int uid: Server.getAllUsers()) {
+							newtoclient.addPayload(uid, Server.getName(uid));
+						}
+
 						for(Socket user: Server.getClientSocket()) {
-							System.out.println(newtoclient.createMessageString());
+							//System.out.println(newtoclient.createMessageString());
 							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
 							toUser.writeBytes(newtoclient.createMessageString());
 							toUser.flush();
@@ -70,13 +71,13 @@ public class Handler
 						toClient.writeBytes("ERROR");
 					}
 					else {
-						System.out.println("here.");
+						//System.out.println("here.");
 						
 						Message newtoclient = new Message(2);
 						newtoclient.addPayload(Server.getClient(client), mFromClient.getPayload()[0]);
 						
 						for(Socket user: Server.getClientSocket()) {
-							System.out.println(newtoclient.createMessageString());
+							//System.out.println(newtoclient.createMessageString());
 							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
 							toUser.writeBytes(newtoclient.createMessageString());
 							toUser.flush();
@@ -97,7 +98,7 @@ public class Handler
 						newtoclient.addPayload(Server.getClient(client), mFromClient.getPayload()[0]);
 						
 						for(Socket user: Server.getClientSocket()) {
-							System.out.println(newtoclient.createMessageString());
+							//System.out.println(newtoclient.createMessageString());
 							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
 							toUser.writeBytes(newtoclient.createMessageString());
 							toUser.flush();

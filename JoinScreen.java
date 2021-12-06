@@ -144,7 +144,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 
 		if (source == joinButton) {
 			try {
-				join("146.86.115.249");
+				join("localhost");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -202,14 +202,6 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		}
 		catch (IOException ioe) {
 			System.err.println("There was an unexpected intteruption!");
-		}
-		finally {
-			if (fromServer != null)
-				fromServer.close();
-			if (toServer != null)
-				toServer.close();
-			if (server != null)
-				server.close();
 		}
 	}
 
