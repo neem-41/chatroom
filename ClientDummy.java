@@ -31,16 +31,16 @@ public class ClientDummy
 			// joining the server
 			toServer = new DataOutputStream(server.getOutputStream());
 			Message messageToserver = new Message(1);
-			messageToserver.addPayload(0, "Neem");
+			messageToserver.addPayload(0, "Reagan");
 			String toSend = messageToserver.createMessageString();
 			System.out.println(toSend);
 			toServer.writeBytes(toSend);
 			toServer.flush();
 
-			// messageToserver = new Message(254);
-			// messageToserver.addPayload(4, "Hi Alex. How are you doing?");
-			// toServer.writeBytes(messageToserver.createMessageString());
-			// toServer.flush();
+			messageToserver = new Message(254);
+			messageToserver.addPayload(2, "This is R");
+			toServer.writeBytes(messageToserver.createMessageString());
+			toServer.flush();
 
 			while ( (fromServer = new BufferedReader(new InputStreamReader(server.getInputStream())))  != null) {
 				System.out.println(fromServer.readLine());

@@ -25,24 +25,27 @@ import javax.print.DocFlavor.INPUT_STREAM;
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class JoinScreen extends JFrame implements ActionListener, KeyListener
+public class Jst extends JFrame implements ActionListener, KeyListener
 {
 	private JButton exitButton;
 	private JButton joinButton;
 	private JTextField sendText;
+	private JTextField ipAddress;
 	private JTextArea displayArea;
 
 	private String ip;
 	
     
         
-	public JoinScreen(String ipAdress) {
+	public Jst() {
 		/**
 		 * a panel used for placing components
 		 */
-		this.ip = ipAdress;
 
 		JPanel p = new JPanel();
+		JLabel name = new JLabel("Username:");
+		JLabel ip = new JLabel("Host IPAddress:");
+		
 
 		Border etched = BorderFactory.createEtchedBorder();
 		Border titled = BorderFactory.createTitledBorder(etched, "Please enter the username that you want to join with.");
@@ -51,7 +54,9 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		/**
 		 * set up all the components
 		 */
-		sendText = new JTextField(30);
+		sendText = new JTextField(10);
+		ipAddress = new JTextField(10);
+		
 		joinButton = new JButton("Join");
         exitButton = new JButton("Exit");
 		
@@ -60,6 +65,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		 * register the listeners for the different button clicks
 		 */
 		sendText.addKeyListener(this);
+		ipAddress.addKeyListener(this);
 		joinButton.addActionListener(this);
         exitButton.addActionListener(this);
         
@@ -67,27 +73,19 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		/**
 		 * add the components to the panel
 		 */
+		p.add(name, BorderLayout.NORTH);
 		p.add(sendText);
+		p.add(ip, BorderLayout.NORTH);
+		p.add(ipAddress);
 		p.add(joinButton);
         p.add(exitButton);
 		
 
 		/**
-		 * add the panel to the "south" end of the container
+		 * add the panel to the "center" end of the container
 		 */
-		getContentPane().add(p,"South");
+		getContentPane().add(p,"Center");
 
-		/**
-		 * add the text area for displaying output. Associate
-		 * a scrollbar with this text area. Note we add the scrollpane
-		 * to the container, not the text area
-		 */
-		displayArea = new JTextArea(15,40);
-		displayArea.setEditable(false);
-		displayArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
-
-		JScrollPane scrollPane = new JScrollPane(displayArea);
-		getContentPane().add(scrollPane,"Center");
 
 		/**
 		 * set the title and size of the frame
@@ -105,39 +103,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 			}
 		} );
 
-        // Image image = ImageIO.read(new File("/Users/alexassante/Desktop/CMPT Networks/Chatroom/image.png"));
-        // setIconImage(image);
 
-	}
-
-	private String message = "";
-
-	/**
-	 * This gets the text the user entered and outputs it
-	 * in the display area.
-	 */
-	public void displayText() {
-		String username = "Username: ";
-		String message = sendText.getText().trim();
-		this.message = message;
-		username += message;
-		StringBuffer buffer = new StringBuffer(username.length());
-		// // now reverse it
-		// for (int i = message.length()-1; i >= 0; i--)
-		//     buffer.append(message.charAt(i));
-		
-		for (int i = 0; i <= username.length()-1; i++)
-			buffer.append(username.charAt(i));
-
-		displayArea.append(buffer.toString() + "\n");
-
-		sendText.setText("");
-		sendText.requestFocus();
-	
-	}
-
-	public String getMessage() {
-		return this.message;
 	}
 
 	/**
@@ -149,7 +115,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 
 		if (source == joinButton) {
 			try {
-				join(ip);
+				join();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -170,10 +136,16 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
         // /**
         //  * This is invoked when the user presses
         //  * a key.
-        //  */
+        // //  */
         public void keyPressed(KeyEvent e) { 
-			if (e.getKeyCode() == KeyEvent.VK_ENTER)
-                displayText();
+		 	// if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			// 	try {
+			// 		join();
+			// 	}
+			// 	catch (IOException ioe) {
+			// 		System.out.println("There was an unexpected intteruption!");
+			// 	}
+			//  }
 		}
         
         /** Not implemented */
@@ -183,7 +155,7 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
         public void keyTyped(KeyEvent e) {  }
         
 
-	public void join(String ip) throws IOException {
+	public void join() throws IOException {
 		int DEFAULT_PORT = 4200;
 		
 		BufferedReader fromServer = null;
@@ -191,12 +163,12 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 		Socket server = null;			// the socket
 		
 		try {
-			server = new Socket(ip, DEFAULT_PORT);
+			server = new Socket(ipAddress.getText(), DEFAULT_PORT);
 
 			// joining the server
 			toServer = new DataOutputStream(server.getOutputStream());
 			Message messageToserver = new Message(1);
-			messageToserver.addPayload(0, getMessage());
+			messageToserver.addPayload(0, sendText.getText());
 			String toSend = messageToserver.createMessageString();
 			toServer.writeBytes(toSend);
 			toServer.flush();
@@ -211,6 +183,6 @@ public class JoinScreen extends JFrame implements ActionListener, KeyListener
 	}
 
 	public static void main(String[] args) throws IOException {
-		JFrame joinChatRoom = new JoinScreen("localhost");
+		JFrame joinChatRoom = new Jst();
 	}
 }

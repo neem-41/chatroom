@@ -21,6 +21,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	private JButton exitButton;
 	private JTextField sendText;
 	private JTextArea displayArea;
+	private JTextArea onlineUsers;
         
 	public ChatScreen() {
 		/**
@@ -67,13 +68,17 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		displayArea.setEditable(false);
 		displayArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
+		onlineUsers = new JTextArea(1,10);
+		onlineUsers.setEditable(false);
+		onlineUsers.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
 		JScrollPane scrollPane = new JScrollPane(displayArea);
 		getContentPane().add(scrollPane,"Center");
 
 		/**
 		 * set the title and size of the frame
 		 */
-		setTitle("GUI Demo");
+		setTitle("ChatScreen");
 		pack();
  
 		setVisible(true);
@@ -108,6 +113,10 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	
 	}
 
+	public void showUsers() {
+		onlineUsers.append("Neem");
+	}
+
 	public String getMessage() {
 		return message;
 	}
@@ -120,7 +129,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		Object source = evt.getSource();
-
+		showUsers();
 		if (source == sendButton) 
 			displayText();
 		else if (source == exitButton)

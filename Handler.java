@@ -55,8 +55,11 @@ public class Handler
 						
 						// Create a message to send to the client by adding add connected users id and name.
 						Message newtoclient = new Message(0);
+						newtoclient.addPayload(Server.getAvailId()-1, mFromClient.getPayload()[0]);
+						
 						for (int uid: Server.getAllUsers()) {
-							newtoclient.addPayload(uid, Server.getName(uid));
+							if (uid != Server.getAvailId() -1)
+								newtoclient.addPayload(uid, Server.getName(uid));
 						}
 
 						// Send the data to the all the users.
