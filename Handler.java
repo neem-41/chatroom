@@ -44,20 +44,23 @@ public class Handler
 
 				// this is for joining.
 				if (mFromClient.getControlType() == 1) {
+					// some error checking not in protocal but is here for testing purpose.
 					if (mFromClient.getPayloadQuantity() != 1) {
 						toClient.writeBytes("ERROR");
 					}
 					else{ 
+						// add client to the hashmaps.
 						Server.addClient(client);
 						Server.addName(Server.getAvailId()-1, mFromClient.getPayload()[0]);
 						
+						// Create a message to send to the client by adding add connected users id and name.
 						Message newtoclient = new Message(0);
 						for (int uid: Server.getAllUsers()) {
 							newtoclient.addPayload(uid, Server.getName(uid));
 						}
 
+						// Send the data to the all the users.
 						for(Socket user: Server.getClientSocket()) {
-							//System.out.println(newtoclient.createMessageString());
 							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
 							toUser.writeBytes(newtoclient.createMessageString());
 							toUser.flush();
@@ -71,18 +74,18 @@ public class Handler
 						toClient.writeBytes("ERROR");
 					}
 					else {
-						//System.out.println("here.");
-						
+						// create a message to send to the client
 						Message newtoclient = new Message(2);
 						newtoclient.addPayload(Server.getClient(client), mFromClient.getPayload()[0]);
 						
+						// Send the leaving message to all clients.
 						for(Socket user: Server.getClientSocket()) {
-							//System.out.println(newtoclient.createMessageString());
 							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
 							toUser.writeBytes(newtoclient.createMessageString());
 							toUser.flush();
 						}
 						
+						// remove the client and close that conenction.
 						Server.removeClient(client);
 						client.close();
 					}
@@ -94,14 +97,36 @@ public class Handler
 						toClient.writeBytes("ERROR");
 					}
 					else {
+						// create a message to send to the clients.
 						Message newtoclient = new Message(255);
 						newtoclient.addPayload(Server.getClient(client), mFromClient.getPayload()[0]);
 						
+						// Send the broadcast message to all clients.
 						for(Socket user: Server.getClientSocket()) {
-							//System.out.println(newtoclient.createMessageString());
 							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
 							toUser.writeBytes(newtoclient.createMessageString());
 							toUser.flush();
+						}
+					}
+				}
+				
+				// this is for private message.
+				if (mFromClient.getControlType() == 254) {
+					if (mFromClient.getPayloadQuantity() != 1) {
+						toClient.writeBytes("ERROR");
+					}
+					else {
+						// create a message to send to the clients.
+						Message newtoclient = new Message(254);
+						newtoclient.addPayload(Server.getClient(client), mFromClient.getPayload()[0]);
+						
+						// Send the direct message to the specific client.
+						for(Socket user: Server.getClientSocket()) {
+							if (Server.getClient(user) == mFromClient.getUserID()[0]) {
+								DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
+								toUser.writeBytes(newtoclient.createMessageString());
+								toUser.flush();
+							}
 						}
 					}
 				}

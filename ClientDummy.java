@@ -37,10 +37,10 @@ public class ClientDummy
 			toServer.writeBytes(toSend);
 			toServer.flush();
 
-			messageToserver = new Message(255);
-			messageToserver.addPayload(3, "Hi this is Neem joining in second.");
-			toServer.writeBytes(messageToserver.createMessageString());
-			toServer.flush();
+			// messageToserver = new Message(254);
+			// messageToserver.addPayload(4, "Hi Alex. How are you doing?");
+			// toServer.writeBytes(messageToserver.createMessageString());
+			// toServer.flush();
 
 			while ( (fromServer = new BufferedReader(new InputStreamReader(server.getInputStream())))  != null) {
 				System.out.println(fromServer.readLine());
