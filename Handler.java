@@ -22,11 +22,6 @@ public class Handler
 {
 
 	public static final int BUFFER_SIZE = 256;
-	private static Vector<Message> broadcast = new Vector<Message>(10,1);
-
-	public static Vector<Message> getVector() {
-		return broadcast;
-	}
 	
 	/**
 	 * this method is invoked by a separate thread
