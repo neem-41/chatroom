@@ -102,9 +102,6 @@ public class Handler
 							toUser.writeBytes(newtoclient.createMessageString());
 							toUser.flush();
 						}
-						
-						Server.removeClient(client);
-						client.close();
 					}
 				}
 
