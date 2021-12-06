@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.lang.model.util.Elements.Origin;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
@@ -21,6 +22,11 @@ public class Handler
 {
 
 	public static final int BUFFER_SIZE = 256;
+	private static Vector<Message> broadcast = new Vector<Message>(10,1);
+
+	public static Vector<Message> getVector() {
+		return broadcast;
+	}
 	
 	/**
 	 * this method is invoked by a separate thread
@@ -41,31 +47,72 @@ public class Handler
 				System.out.println(messageFromClient);
 				Message mFromClient = new Message(messageFromClient);
 
+				// this is for joining.
 				System.out.println(mFromClient.getPayloadQuantity());
 				if (mFromClient.getControlType() == 1) {
 					if (mFromClient.getPayloadQuantity() != 1) {
 						toClient.writeBytes("ERROR");
 					}
 					else{ 
-						//TODO: Return a broadcast to all the clients with teh appropriate format.
 						Server.addClient(client);
 						System.out.println(mFromClient.getPayload()[0] + " has joined the chatroom and got the userID: " + Server.getClient(client));
+						
+						Message newtoclient = new Message(0);
+						newtoclient.addPayload(Server.getAvailId()-1, mFromClient.getPayload()[0]);
+						
+						for(Socket user: Server.getClientSocket()) {
+							System.out.println(newtoclient.createMessageString());
+							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
+							toUser.writeBytes(newtoclient.createMessageString());
+							toUser.flush();
+						}
 					}
 				}
 
+				// this is for leaving
 				if (mFromClient.getControlType() == 2) {
 					if (mFromClient.getPayloadQuantity() != 1) {
 						toClient.writeBytes("ERROR");
 					}
 					else {
-						Server.removeClient(client);
 						System.out.println("here.");
-						for (int f : Server.getAllUsers()) {
-							System.out.println(f + " is still on server.");
-							client.close();
+						
+						Message newtoclient = new Message(2);
+						newtoclient.addPayload(Server.getClient(client), mFromClient.getPayload()[0]);
+						
+						for(Socket user: Server.getClientSocket()) {
+							System.out.println(newtoclient.createMessageString());
+							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
+							toUser.writeBytes(newtoclient.createMessageString());
+							toUser.flush();
 						}
+						
+						Server.removeClient(client);
+						client.close();
 					}
 				}
+
+				//this is for broadcast.
+				if (mFromClient.getControlType() == 255) {
+					if (mFromClient.getPayloadQuantity() != 1) {
+						toClient.writeBytes("ERROR");
+					}
+					else {
+						Message newtoclient = new Message(255);
+						newtoclient.addPayload(Server.getClient(client), mFromClient.getPayload()[0]);
+						
+						for(Socket user: Server.getClientSocket()) {
+							System.out.println(newtoclient.createMessageString());
+							DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
+							toUser.writeBytes(newtoclient.createMessageString());
+							toUser.flush();
+						}
+						
+						Server.removeClient(client);
+						client.close();
+					}
+				}
+
 				toClient.flush();
 			}
 

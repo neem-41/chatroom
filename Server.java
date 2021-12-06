@@ -45,6 +45,14 @@ public class  Server
 	public static Collection<Integer> getAllUsers() {
 		return map.values();
 	}
+
+	public static int getAvailId() {
+		return userID_avail;
+	}
+
+	public static Collection<Socket> getClientSocket() {
+		return map.keySet();
+	}
 	
 	public static void main(String[] args) throws IOException {
 		ServerSocket sock = null;
