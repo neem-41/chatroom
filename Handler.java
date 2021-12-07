@@ -2,9 +2,9 @@
  * Handler class containing the logic for echoing results back
  * to the client. 
  *
- * @author Greg Gagne 
+ * @author Swornim Chhetri
  * 
- * Edited by: Swornim Chhetri
+ * Derived from the work of Greg Gagne.
  */
 
 import java.io.*;
