@@ -34,6 +34,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	private JTextArea displayArea;
 	private JTextArea onlineUsers;
 	private JLabel ousers;
+	private JComboBox<String> jbox;
 
 	private Socket server;
 	private String username;
@@ -80,12 +81,25 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		sendButton.addActionListener(this);
 		exitButton.addActionListener(this);
 
+
+		
+		int count = 1;
+		String[] options = new String[map.size() + 1];
+		options[0] = "Everyone";
+		for(String name: map.values()) {
+			options[count++] = name;
+		}
+
+
+		jbox = new JComboBox<>(options);
 		/**
 		 * add the components to the panel
 		 */
 		p.add(sendText);
 		p.add(sendButton);
 		p.add(exitButton);
+		p.add(jbox); 
+		
 
 		/**
 		 * add the panel to the "south" end of the container
@@ -135,7 +149,13 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	 * in the display area.
 	 */
 	public void displayText() {
-		String message = this.username + ": " + sendText.getText().trim();
+		String message;
+		if (jbox.getSelectedItem().equals("Everyone")) {
+			message = this.username + ": " + sendText.getText().trim();
+		}
+		else {
+			message = "(To " + jbox.getSelectedItem() + ") " + this.username + ": " + sendText.getText().trim();
+		}
 		StringBuffer buffer = new StringBuffer(message.length());
 		
 		for (int i = 0; i <= message.length()-1; i++)
@@ -159,7 +179,15 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 
 				displayArea.append(buffer.toString() + "\n");
 			}
+		}
+		else {
+			String message = "(private) " + map.get(mfs.getUserID()[0]) + ": " + mfs.getPayload()[0];
+			StringBuffer buffer = new StringBuffer(message.length());
 			
+				for (int i = 0; i <= message.length()-1; i++)
+					buffer.append(message.charAt(i));
+
+				displayArea.append(buffer.toString() + "\n");
 		}
 	}
 
@@ -169,7 +197,18 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 			message = message + name + "<br/>";
 		}
 		message = message + "</html>";
-		ousers.setText(message);		
+		ousers.setText(message);
+		
+		
+		jbox.removeAllItems();
+		jbox.addItem("Everyone");
+		
+		for(String name: map.values()) {
+			if (!name.equals(username))
+				jbox.addItem(name);
+		}
+	
+
 	}
 
 
@@ -216,11 +255,22 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	public void broadcast() {
 		try {
 			DataOutputStream toServer = new DataOutputStream(server.getOutputStream());
-			Message messageToserver = new Message(255);
-			messageToserver.addPayload(0, sendText.getText());
+			Message messageToserver;
+			if (jbox.getSelectedItem() == "Everyone") {
+				messageToserver = new Message(255);
+				messageToserver.addPayload(0, sendText.getText());
+			}
+			else {
+				messageToserver = new Message(254);
+				for (int i: map.keySet()) {
+					if (map.get(i).equals(jbox.getSelectedItem()))
+						messageToserver.addPayload(i, sendText.getText());
+				}
+			}
 			String toSend = messageToserver.createMessageString();
 			toServer.writeBytes(toSend);
 			toServer.flush();
+			
 		}
 		catch (IOException e) {
 			e.printStackTrace();
