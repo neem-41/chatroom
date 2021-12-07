@@ -33,26 +33,38 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	private JTextField sendText;
 	private JTextArea displayArea;
 	private JTextArea onlineUsers;
+	private JLabel ousers;
 
 	private Socket server;
 	private String username;
 	private Runnable rt;
 	private static final Executor exec = Executors.newCachedThreadPool();
-	private HashMap<Integer, String> mapName = new HashMap<Integer, String>();
+
+	public HashMap<Integer, String> map;
+
         
-	public ChatScreen(Socket ser, String un) {
+	public ChatScreen(Socket ser, String un, HashMap<Integer, String> m)  {
 		/**
 		 * a panel used for placing components
 		 */
 		this.server = ser;
 		this.username = un;
-		System.out.println(this.server);
+		this.map = m;
+
+		System.out.println(map);
 
 		JPanel p = new JPanel();
+		JPanel ou = new JPanel();
 
 		Border etched = BorderFactory.createEtchedBorder();
 		Border titled = BorderFactory.createTitledBorder(etched, "Enter Message Here ...");
 		p.setBorder(titled);
+
+		Border lined = BorderFactory.createLineBorder(Color.blue);
+		ou.setBorder(lined);
+		ousers = new JLabel("");
+		ou.add(ousers);
+		p.add(ou);
 
 		/**
 		 * set up all the components
@@ -79,6 +91,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		 * add the panel to the "south" end of the container
 		 */
 		getContentPane().add(p,"South");
+		getContentPane().add(ou, "East");
 		/**
 		 * add the text area for displaying output. Associate
 		 * a scrollbar with this text area. Note we add the scrollpane
@@ -88,11 +101,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		displayArea.setEditable(false);
 		displayArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-		onlineUsers = new JTextArea(1,10);
-		onlineUsers.setEditable(false);
-		onlineUsers.setFont(new Font("SansSerif", Font.PLAIN, 14));
-
-		displayArea.add(onlineUsers, BorderLayout.EAST);
 
 		JScrollPane scrollPane = new JScrollPane(displayArea);
 		getContentPane().add(scrollPane,"Center");
@@ -113,22 +121,14 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 			}
 		} );
 
+		displayOnlineUsers();
+
 		
 	}
 
-	String message = "";
+	//String message = "";
 
-	public String getName(int userID) {
-		return this.mapName.get(userID);
-	}
-
-	public void addName(int userID, String name) {
-		this.mapName.put(userID, name);
-	}
-
-	public boolean checkId(int userID) {
-		return this.mapName.containsKey(userID);
-	}
+	
 
 	/**
 	 * This gets the text the user entered and outputs it
@@ -150,15 +150,26 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 
 	public void displaygotText(Message mfs) {
 		if (mfs.getControlType() == 255) {
-			System.out.println(this.getName(mfs.getUserID()[0]) + "userID");
-			String message = Server.nameMap.get( (Integer) mfs.getUserID()[0]) + ": " + mfs.getPayload()[0];
-			StringBuffer buffer = new StringBuffer(message.length());
+			if (!map.get(mfs.getUserID()[0]).equals(username)) {
+				String message = map.get(mfs.getUserID()[0]) + ": " + mfs.getPayload()[0];
+				StringBuffer buffer = new StringBuffer(message.length());
 			
-			for (int i = 0; i <= message.length()-1; i++)
-				buffer.append(message.charAt(i));
+				for (int i = 0; i <= message.length()-1; i++)
+					buffer.append(message.charAt(i));
 
-			displayArea.append(buffer.toString() + "\n");
+				displayArea.append(buffer.toString() + "\n");
+			}
+			
 		}
+	}
+
+	public void displayOnlineUsers() {
+		String message = "<html>Online users:<br/>";
+		for(String name: map.values()) {
+			message = message + name + "<br/>";
+		}
+		message = message + "</html>";
+		ousers.setText(message);		
 	}
 
 
@@ -224,8 +235,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 			String toSend = messageToserver.createMessageString();
 			toServer.writeBytes(toSend);
 			toServer.flush();
-
-			server.close();
 		}
 		catch (IOException e) {
 			e.printStackTrace();

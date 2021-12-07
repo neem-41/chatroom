@@ -36,11 +36,14 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 
 	private String ip;
 	private Socket server;
+
+	private HashMap<Integer, String> map;
         
 	public Jst() {
 		/**
 		 * a panel used for placing components
 		 */
+		map = new HashMap<>();
 
 		JPanel p = new JPanel();
 		JLabel name = new JLabel("Username:");
@@ -121,7 +124,7 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 				e.printStackTrace();
 			}
 			finally {
-				JFrame chatroom = new ChatScreen(server, sendText.getText());
+				ChatScreen chatroom = new ChatScreen(server, sendText.getText(), map);
 				chatroom.setVisible(true);
 				this.dispose();
 
@@ -178,8 +181,16 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 			toServer.flush();
 
 			fromServer = new BufferedReader(new InputStreamReader(server.getInputStream()));
-			Message messageFromServer = new Message(fromServer.readLine());
-			System.out.println(messageFromServer.getPayloadQuantity());
+			String check = fromServer.readLine();
+
+			System.out.println(check);
+
+			Message mfs = new Message(check);
+			for(int i = 0; i < mfs.getPayloadQuantity(); i++) {
+				map.put(mfs.getUserID()[i], mfs.getPayload()[i]);
+			}
+
+			System.out.println(map);
 			
 		}
 		catch (IOException ioe) {

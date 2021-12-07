@@ -39,7 +39,6 @@ public class Handler
 			String messageFromClient;
 			
 			while( (messageFromClient = fromClient.readLine()) != null) {
-				System.out.println(messageFromClient);
 				Message mFromClient = new Message(messageFromClient);
 
 				// this is for joining.
@@ -55,7 +54,6 @@ public class Handler
 						// Create a message to send to the client by adding connected users id and name.
 						Message newtoclient = new Message(0);
 						newtoclient.addPayload(Server.getAvailId()-1, mFromClient.getPayload()[0]);
-						System.out.println(Server.getAvailId());
 
 						for (int uid: Server.getAllUsers()) {
 							if (uid != Server.getAvailId()-1)
@@ -90,7 +88,6 @@ public class Handler
 						
 						// remove the client and close that conenction.
 						Server.removeClient(client);
-						client.close();
 					}
 				}
 
@@ -110,6 +107,8 @@ public class Handler
 							toUser.writeBytes(newtoclient.createMessageString());
 							toUser.flush();
 						}
+
+						
 					}
 				}
 				

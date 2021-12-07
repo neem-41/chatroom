@@ -8,9 +8,9 @@ import java.io.InputStreamReader;
 public class ReaderThread implements Runnable
 {
     private Socket server;
-    private JFrame current;
+    private ChatScreen current;
     
-    public ReaderThread(Socket ser, JFrame cur) {
+    public ReaderThread(Socket ser, ChatScreen cur) {
         this.server = ser;
         this.current = cur;
     }
@@ -31,15 +31,19 @@ public class ReaderThread implements Runnable
                 * and resume listening from the socket.
                 */
                 if (mfromServer.getControlType() == 0) {
-                    ChatScreen cur = (ChatScreen) current;
-                    for (int i = 0; i < mfromServer.getPayloadQuantity(); i++) {
-                        if (!cur.checkId(mfromServer.getUserID()[i])) {
-                            cur.addName(i, mfromServer.getPayload()[i]);
+                    for(int i = 0; i < mfromServer.getPayloadQuantity(); i++) {
+                        if (!current.map.containsKey(mfromServer.getUserID()[i])) {
+                            current.map.put(mfromServer.getUserID()[0], mfromServer.getPayload()[0]);
                         }
                     }
+                    current.displayOnlineUsers();
                 }
-                else {     
-                    ((ChatScreen) current).displaygotText(mfromServer);
+                else if (mfromServer.getControlType() == 2) {
+                    current.map.remove(mfromServer.getUserID()[0]);
+                    current.displayOnlineUsers();
+                }
+                else {
+                    current.displaygotText(mfromServer);
                 }
             }
         }

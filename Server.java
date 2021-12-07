@@ -17,6 +17,7 @@ import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
 
 public class  Server
@@ -28,7 +29,8 @@ public class  Server
 	private static final Executor exec = Executors.newCachedThreadPool();
 
 	private static HashMap<Socket, Integer> map = new HashMap<>();
-	public static HashMap<Integer, String> nameMap = new HashMap<>();
+	public static Map<Integer, String> nameMap = new HashMap<>();
+
 	private static int userID_avail = 2;
 
 	public static String getName(int userID) {
