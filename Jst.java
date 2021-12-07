@@ -34,6 +34,7 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 	private JTextArea displayArea;
 
 	private String ip;
+	private Socket server;
 	
     
         
@@ -121,7 +122,18 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 				e.printStackTrace();
 			}
 			finally {
-            	System.exit(0);
+				JFrame chatroom = new ChatScreen(server, sendText.getText());
+				chatroom.setVisible(true);
+				this.dispose();
+				// try {
+				// 	BufferedReader fromServer = null;
+				// 	while ( (fromServer = new BufferedReader(new InputStreamReader(server.getInputStream())))  != null) {
+				// 		System.out.println(fromServer.readLine());
+				// 	}
+				// }
+				// catch (IOException e) {
+				// 	e.printStackTrace();
+				// }
 			}
 		}
 		else if (source == exitButton)
@@ -160,7 +172,6 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 		
 		BufferedReader fromServer = null;
 		DataOutputStream toServer = null;		// the writer to the network
-		Socket server = null;			// the socket
 		
 		try {
 			server = new Socket(ipAddress.getText(), DEFAULT_PORT);
@@ -175,6 +186,7 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 
 			fromServer = new BufferedReader(new InputStreamReader(server.getInputStream()));
 			Message messageFromServer = new Message(fromServer.readLine());
+			System.out.println(messageFromServer.getPayloadQuantity());
 			
 		}
 		catch (IOException ioe) {
@@ -183,6 +195,6 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 	}
 
 	public static void main(String[] args) throws IOException {
-		JFrame joinChatRoom = new Jst();
+		Jst joinChatRoom = new Jst();
 	}
 }

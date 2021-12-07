@@ -12,6 +12,13 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -22,11 +29,18 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	private JTextField sendText;
 	private JTextArea displayArea;
 	private JTextArea onlineUsers;
+
+	private Socket server;
+	private String username;
         
-	public ChatScreen() {
+	public ChatScreen(Socket ser, String un) {
 		/**
 		 * a panel used for placing components
 		 */
+		this.server = ser;
+		this.username = un;
+		System.out.println(this.server);
+
 		JPanel p = new JPanel();
 
 		Border etched = BorderFactory.createEtchedBorder();
@@ -58,7 +72,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		 * add the panel to the "south" end of the container
 		 */
 		getContentPane().add(p,"South");
-
 		/**
 		 * add the text area for displaying output. Associate
 		 * a scrollbar with this text area. Note we add the scrollpane
@@ -72,17 +85,21 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		onlineUsers.setEditable(false);
 		onlineUsers.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
+		displayArea.add(onlineUsers, BorderLayout.EAST);
+
 		JScrollPane scrollPane = new JScrollPane(displayArea);
 		getContentPane().add(scrollPane,"Center");
 
 		/**
 		 * set the title and size of the frame
 		 */
-		setTitle("ChatScreen");
+		setTitle("ChatScreen - " + this.username);
 		pack();
  
 		setVisible(true);
 		sendText.requestFocus();
+
+		showUsers();
 
 		/** anonymous inner class to handle window closing events */
 		addWindowListener(new WindowAdapter() {
@@ -100,7 +117,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	 * in the display area.
 	 */
 	public void displayText() {
-		String message = sendText.getText().trim();
+		String message = this.username + ": " + sendText.getText().trim();
 		StringBuffer buffer = new StringBuffer(message.length());
 		
 		for (int i = 0; i <= message.length()-1; i++)
@@ -114,7 +131,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	}
 
 	public void showUsers() {
-		onlineUsers.append("Neem");
+		onlineUsers.append("Neem" + "\n");
 	}
 
 	public String getMessage() {
@@ -130,10 +147,12 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	public void actionPerformed(ActionEvent evt) {
 		Object source = evt.getSource();
 		showUsers();
-		if (source == sendButton) 
-			displayText();
+		if (source == sendButton) {
+			broadcast();
+			displayText();		
+		}
 		else if (source == exitButton)
-			//Leave();
+			leave();
 			System.exit(0);
 	}
         
@@ -147,8 +166,10 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
          * the ENTER key.
          */
         public void keyPressed(KeyEvent e) { 
-            if (e.getKeyCode() == KeyEvent.VK_ENTER)
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				broadcast();
                 displayText();
+			}
         }
         
         /** Not implemented */
@@ -158,12 +179,32 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
         public void keyTyped(KeyEvent e) {  }
      
 	// not yet implemented 
-	public void Leave() {
+	public void broadcast() {
+		try {
+			DataOutputStream toServer = new DataOutputStream(server.getOutputStream());
+			Message messageToserver = new Message(255);
+			messageToserver.addPayload(0, sendText.getText());
+			String toSend = messageToserver.createMessageString();
+			toServer.writeBytes(toSend);
+			toServer.flush();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
+	public void leave() {
+		try {
+			DataOutputStream toServer = new DataOutputStream(server.getOutputStream());
+			Message messageToserver = new Message(2);
+			messageToserver.addPayload(0, this.username);
+			String toSend = messageToserver.createMessageString();
+			toServer.writeBytes(toSend);
+			toServer.flush();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public static void main(String[] args) {
-		JFrame chatroom = new ChatScreen();
-
-	}
 }
