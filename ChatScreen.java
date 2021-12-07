@@ -25,6 +25,11 @@ import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.Highlight;
+import javax.swing.text.Highlighter.HighlightPainter;
 
 public class ChatScreen extends JFrame implements ActionListener, KeyListener
 {
@@ -39,7 +44,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	private Socket server;
 	private String username;
 	private Runnable rt;
-	private static final Executor exec = Executors.newCachedThreadPool();
 
 	public HashMap<Integer, String> map;
 
@@ -51,8 +55,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		this.server = ser;
 		this.username = un;
 		this.map = m;
-
-		System.out.println(map);
 
 		JPanel p = new JPanel();
 		JPanel ou = new JPanel();
@@ -91,6 +93,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		}
 
 
+		// To show the options to choose private messaging or all message
 		jbox = new JComboBox<>(options);
 		/**
 		 * add the components to the panel
@@ -131,6 +134,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		/** anonymous inner class to handle window closing events */
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
+				leave();
 				System.exit(0);
 			}
 		} );
@@ -139,9 +143,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 
 		
 	}
-
-	//String message = "";
-
 	
 
 	/**
@@ -164,8 +165,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		displayArea.append(buffer.toString() + "\n");
 
 		sendText.setText("");
-		sendText.requestFocus();
-	
+		sendText.requestFocus();	
 	}
 
 	public void displaygotText(Message mfs) {
