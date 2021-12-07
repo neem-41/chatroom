@@ -28,19 +28,20 @@ public class  Server
 	private static final Executor exec = Executors.newCachedThreadPool();
 
 	private static HashMap<Socket, Integer> map = new HashMap<>();
-	private static HashMap<Integer, String> nameMap = new HashMap<>();
+	public static HashMap<Integer, String> nameMap = new HashMap<>();
 	private static int userID_avail = 2;
 
-	public static void addName(int userID, String name) {
-		nameMap.put(userID, name);
-	}
-
 	public static String getName(int userID) {
-		return nameMap.get(userID);
+		System.out.println(nameMap.size());
+		return nameMap.get(userID);	
 	}
 
-	public static void addClient(Socket client) {
-		map.put(client, userID_avail++);
+	public static void addClient(Socket client, String name) {
+		map.put(client, userID_avail);
+		nameMap.put(userID_avail, name);
+		userID_avail++;
+
+		System.out.println(nameMap.size());
 	}
 
 	public static void removeClient(Socket client) {

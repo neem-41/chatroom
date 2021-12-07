@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.Hashtable;
+import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -36,6 +38,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	private String username;
 	private Runnable rt;
 	private static final Executor exec = Executors.newCachedThreadPool();
+	private HashMap<Integer, String> mapName = new HashMap<Integer, String>();
         
 	public ChatScreen(Socket ser, String un) {
 		/**
@@ -115,6 +118,18 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 
 	String message = "";
 
+	public String getName(int userID) {
+		return this.mapName.get(userID);
+	}
+
+	public void addName(int userID, String name) {
+		this.mapName.put(userID, name);
+	}
+
+	public boolean checkId(int userID) {
+		return this.mapName.containsKey(userID);
+	}
+
 	/**
 	 * This gets the text the user entered and outputs it
 	 * in the display area.
@@ -135,8 +150,8 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 
 	public void displaygotText(Message mfs) {
 		if (mfs.getControlType() == 255) {
-			System.out.println(Server.getName(2));
-			String message = Server.getName(mfs.getUserID()[0]) + ": " + mfs.getPayload()[0];
+			System.out.println(this.getName(mfs.getUserID()[0]) + "userID");
+			String message = Server.nameMap.get( (Integer) mfs.getUserID()[0]) + ": " + mfs.getPayload()[0];
 			StringBuffer buffer = new StringBuffer(message.length());
 			
 			for (int i = 0; i <= message.length()-1; i++)

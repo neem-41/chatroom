@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 import javax.print.DocFlavor.INPUT_STREAM;
 //import javax.imageio.ImageIO;
@@ -35,8 +36,6 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 
 	private String ip;
 	private Socket server;
-	
-    
         
 	public Jst() {
 		/**

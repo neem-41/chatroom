@@ -50,15 +50,15 @@ public class Handler
 					}
 					else{ 
 						// add client to the hashmaps.
-						Server.addClient(client);
-						Server.addName(Server.getAvailId()-1, mFromClient.getPayload()[0]);
+						Server.addClient(client, mFromClient.getPayload()[0]);
 						
-						// Create a message to send to the client by adding add connected users id and name.
+						// Create a message to send to the client by adding connected users id and name.
 						Message newtoclient = new Message(0);
 						newtoclient.addPayload(Server.getAvailId()-1, mFromClient.getPayload()[0]);
-						
+						System.out.println(Server.getAvailId());
+
 						for (int uid: Server.getAllUsers()) {
-							if (uid != Server.getAvailId() -1)
+							if (uid != Server.getAvailId()-1)
 								newtoclient.addPayload(uid, Server.getName(uid));
 						}
 

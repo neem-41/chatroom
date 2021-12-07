@@ -30,7 +30,17 @@ public class ReaderThread implements Runnable
                  * ok, data has now arrived. Display it in the text area,
                 * and resume listening from the socket.
                 */
-                ((ChatScreen) current).displaygotText(mfromServer);
+                if (mfromServer.getControlType() == 0) {
+                    ChatScreen cur = (ChatScreen) current;
+                    for (int i = 0; i < mfromServer.getPayloadQuantity(); i++) {
+                        if (!cur.checkId(mfromServer.getUserID()[i])) {
+                            cur.addName(i, mfromServer.getPayload()[i]);
+                        }
+                    }
+                }
+                else {     
+                    ((ChatScreen) current).displaygotText(mfromServer);
+                }
             }
         }
         catch (java.io.IOException ioe) { }
