@@ -125,15 +125,9 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 				JFrame chatroom = new ChatScreen(server, sendText.getText());
 				chatroom.setVisible(true);
 				this.dispose();
-				// try {
-				// 	BufferedReader fromServer = null;
-				// 	while ( (fromServer = new BufferedReader(new InputStreamReader(server.getInputStream())))  != null) {
-				// 		System.out.println(fromServer.readLine());
-				// 	}
-				// }
-				// catch (IOException e) {
-				// 	e.printStackTrace();
-				// }
+
+				Thread ReaderThread = new Thread(new ReaderThread(server, chatroom));
+				ReaderThread.start();
 			}
 		}
 		else if (source == exitButton)

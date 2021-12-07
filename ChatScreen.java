@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -32,6 +34,8 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 
 	private Socket server;
 	private String username;
+	private Runnable rt;
+	private static final Executor exec = Executors.newCachedThreadPool();
         
 	public ChatScreen(Socket ser, String un) {
 		/**
@@ -99,8 +103,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		setVisible(true);
 		sendText.requestFocus();
 
-		showUsers();
-
 		/** anonymous inner class to handle window closing events */
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
@@ -108,6 +110,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 			}
 		} );
 
+		
 	}
 
 	String message = "";
@@ -130,15 +133,19 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	
 	}
 
-	public void showUsers() {
-		onlineUsers.append("Neem" + "\n");
+	public void displaygotText(Message mfs) {
+		if (mfs.getControlType() == 255) {
+			System.out.println(Server.getName(2));
+			String message = Server.getName(mfs.getUserID()[0]) + ": " + mfs.getPayload()[0];
+			StringBuffer buffer = new StringBuffer(message.length());
+			
+			for (int i = 0; i <= message.length()-1; i++)
+				buffer.append(message.charAt(i));
+
+			displayArea.append(buffer.toString() + "\n");
+		}
 	}
 
-	public String getMessage() {
-		return message;
-	}
-
-	
 
 	/**
 	 * This method responds to action events .... i.e. button clicks
@@ -146,14 +153,15 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		Object source = evt.getSource();
-		showUsers();
+		
 		if (source == sendButton) {
 			broadcast();
 			displayText();		
 		}
-		else if (source == exitButton)
+		else if (source == exitButton) {
 			leave();
 			System.exit(0);
+		}
 	}
         
         /**
@@ -201,6 +209,8 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 			String toSend = messageToserver.createMessageString();
 			toServer.writeBytes(toSend);
 			toServer.flush();
+
+			server.close();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
