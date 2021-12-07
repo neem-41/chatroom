@@ -212,7 +212,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
         /** Not implemented */
         public void keyTyped(KeyEvent e) {  }
      
-	// not yet implemented 
+	// this is for broadcast from the server.
 	public void broadcast() {
 		try {
 			DataOutputStream toServer = new DataOutputStream(server.getOutputStream());
@@ -227,6 +227,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		}
 	}
 
+	// this is for when people leave.
 	public void leave() {
 		try {
 			DataOutputStream toServer = new DataOutputStream(server.getOutputStream());
@@ -240,5 +241,4 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 			e.printStackTrace();
 		}
 	}
-	
 }
