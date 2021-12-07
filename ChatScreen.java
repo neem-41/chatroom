@@ -168,6 +168,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		sendText.requestFocus();	
 	}
 
+	// method to display the recieved text from the server.
 	public void displaygotText(Message mfs) {
 		if (mfs.getControlType() == 255) {
 			if (!map.get(mfs.getUserID()[0]).equals(username)) {
@@ -191,6 +192,7 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 		}
 	}
 
+	// method to display online users.
 	public void displayOnlineUsers() {
 		String message = "<html>Online users:<br/>";
 		for(String name: map.values()) {
@@ -207,7 +209,6 @@ public class ChatScreen extends JFrame implements ActionListener, KeyListener
 			if (!name.equals(username))
 				jbox.addItem(name);
 		}
-	
 
 	}
 

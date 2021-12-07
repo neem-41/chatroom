@@ -194,7 +194,7 @@ public class Jst extends JFrame implements ActionListener, KeyListener
 			
 		}
 		catch (IOException ioe) {
-			System.err.println("There was an unexpected intteruption!");
+			System.err.println("There was an unexpected intteruption!....");
 		}
 	}
 

@@ -139,7 +139,20 @@ public class Handler
 			
    		}
 		catch (IOException ioe) {
-			System.err.println(ioe);
+			System.out.println("There was an unexpected error");
+			int uid = Server.getClient(client);
+			Message mtc = new Message(2);
+			mtc.addPayload(uid, "leaving");
+			
+			Server.removeClient(client);
+			// client.close();
+
+			for(Socket user: Server.getClientSocket()) {
+				DataOutputStream toUser = new DataOutputStream(user.getOutputStream());
+				toUser.writeBytes(mtc.createMessageString());
+				toUser.flush();
+			}
+
 		}
 		finally {
 			if (fromClient != null)
