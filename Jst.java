@@ -146,14 +146,22 @@ public class Jst extends JFrame implements ActionListener, KeyListener
         //  * a key.
         // //  */
         public void keyPressed(KeyEvent e) { 
-		 	// if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-			// 	try {
-			// 		join();
-			// 	}
-			// 	catch (IOException ioe) {
-			// 		System.out.println("There was an unexpected intteruption!");
-			// 	}
-			//  }
+		 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				try {
+					join();
+				}
+				catch (IOException ioe) {
+					System.out.println("There was an unexpected intteruption!");
+				}
+				finally {
+					ChatScreen chatroom = new ChatScreen(server, sendText.getText(), map);
+					chatroom.setVisible(true);
+					this.dispose();
+	
+					Thread ReaderThread = new Thread(new ReaderThread(server, chatroom));
+					ReaderThread.start();
+				}
+			 }
 		}
         
         /** Not implemented */
